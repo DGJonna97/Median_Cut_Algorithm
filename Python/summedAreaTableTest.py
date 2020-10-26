@@ -7,6 +7,8 @@ Created on Mon Oct 26 10:29:35 2020
 
 import numpy as np
 
+test = 'cheese.jpg'
+
 def summed_area_table(img):
     
     table = np.zeros_like(img).astype(int)
@@ -30,3 +32,7 @@ def summed_area_table(img):
                 table[row, col] = img[row, col]
                 
     return table
+
+print(summed_area_table(test))
+
+# Gives an int() with base 10: ' ' error
