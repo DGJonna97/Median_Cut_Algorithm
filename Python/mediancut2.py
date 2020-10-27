@@ -16,7 +16,7 @@ def intensity(img):
             pixel = img[i, j]
             pixelIntensity = 0.2125*pixel[2] + 0.7154*pixel[1] + 0.0721*pixel[0]  # BGR image
             greyimg[i, j] = pixelIntensity
-            row.append(round(pixelIntensity))
+            row.append(pixelIntensity)
         tempvalues.append(row)
     print("OG img shape " + str( np.shape(img)))
     print("intensity values shape" + str(np.shape(tempvalues)))
@@ -33,7 +33,7 @@ def SAT(region):
 
 
 def mediancut():
-    img = cv2.imread('download.jfif', cv2.IMREAD_COLOR) # reads BGR image
+    img = cv2.imread('cheese.jpg', cv2.IMREAD_COLOR) # reads BGR image
     intensityMap, grey = intensity(img) # returns 2d array of intensity values and the greyscaled image
     cv2.imshow("kraus", grey)  # comment this out if you dont want to keep closing grey image
     cv2.waitKey(0)  # comment this out if you dont want to keep closing grey image
@@ -69,7 +69,7 @@ def step3(regionList, iterations, img):
                     #  print("value 1= " + str(value1))
                     #   print("value 2= " + str(value2))
                     if slicer < 0:
-                        print("failed")
+                        print("failed to find cutting point since slicer is below 0")
                         break
                     if value1 > value2:
                         slicer += 2
@@ -103,7 +103,7 @@ def step3(regionList, iterations, img):
                 regionList.append(region2)
                 iterations=iterations-1
                 print("commencing iteration: " +  str(iterations))
-
+                print("=" * 37)
                 step3(regionList, iterations, img)
 
 
@@ -124,7 +124,7 @@ def step3(regionList, iterations, img):
                     # print("value 1= " + str(value1))
                     #  print("value 2= " + str(value2))
                     if slicer < 0:
-                        print("failed")
+                        print("failed to find cutting point since slicer is below 0")
                         break
                     if value1 > value2:
                         slicer += 2
@@ -156,6 +156,7 @@ def step3(regionList, iterations, img):
                 regionList.append(region2)
                 iterations = iterations - 1
                 print("commencing iteration: " + str(iterations))
+                print("="*37)
                 step3(regionList, iterations - 1, img)
 
 
