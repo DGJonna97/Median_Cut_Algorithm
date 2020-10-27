@@ -33,7 +33,7 @@ def SAT(region):
 
 
 def mediancut():
-    img = cv2.imread('cheese.jpg', cv2.IMREAD_COLOR) # reads BGR image
+    img = cv2.imread('download.jfif', cv2.IMREAD_COLOR) # reads BGR image
     intensityMap, grey = intensity(img) # returns 2d array of intensity values and the greyscaled image
     cv2.imshow("kraus", grey)  # comment this out if you dont want to keep closing grey image
     cv2.waitKey(0)  # comment this out if you dont want to keep closing grey image
@@ -101,7 +101,10 @@ def step3(regionList, iterations, img):
                # regionList = []
                 regionList.append(region1)
                 regionList.append(region2)
-                step3(regionList, iterations - 1, img)
+                iterations=iterations-1
+                print("commencing iteration: " +  str(iterations))
+
+                step3(regionList, iterations, img)
 
 
             else:
@@ -151,14 +154,16 @@ def step3(regionList, iterations, img):
                 #regionList = []
                 regionList.append(region1)
                 regionList.append(region2)
+                iterations = iterations - 1
+                print("commencing iteration: " + str(iterations))
                 step3(regionList, iterations - 1, img)
-                print("commencing itereation: " + iterations)
+
 
 
 mediancut()
 """
 #below lines draws 4x4 boxes
-
+for x in range (0,4):
 print (i)
 print ("hej " + str( regionList[0].cumsum(axis=0).cumsum(axis=1)))
 h, w = np.shape(regionList[i])
@@ -166,34 +171,28 @@ egionSAT= ComputeSummedAreaTable(regionList[i])
 boxx=w/4
 boxy=h/4
 currx=0
+curry = 0
+for y in range(0, 4):
+#you are curently dividing the longest region in pixels and not light energi
+#light energy = weigthes average of the color channels of the light probe image
+#use a summed area table
 
-
-
-
-# old code
-for x in range (0,4):
-    curry = 0
-    for y in range(0, 4):
-    #you are curently dividing the longest region in pixels and not light energi
-    #light energy = weigthes average of the color channels of the light probe image
-    #use a summed area table
-
-        start_point = int(currx), int(curry)
-        end_point = int(boxx+currx),int(boxy+curry)
+    start_point = int(currx), int(curry)
+    end_point = int(boxx+currx),int(boxy+curry)
 
 
 
 
 
 
-        color = (0, 255, 0)
+    color = (0, 255, 0)
 
-        thickness = 2
-        print(start_point)
-        print(end_point)
-        img = cv2.rectangle(img, start_point, end_point, color, thickness)
-        curry+=boxy
-    currx+=boxx
+    thickness = 2
+    print(start_point)
+    print(end_point)
+    img = cv2.rectangle(img, start_point, end_point, color, thickness)
+    curry+=boxy
+currx+=boxx
 print("hej" + str(currx))
 
 cv2.imshow("image", img)
