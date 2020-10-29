@@ -1,7 +1,5 @@
-import struct
 import cv2
 import numpy as np
-
 
 def intensity(img):
     # loop trough every pixel and modify the color values, before adding them together into intensity
@@ -33,7 +31,7 @@ def SAT(region):
 
 
 def mediancut():
-    img = cv2.imread('cheese.jpg', cv2.IMREAD_COLOR) # reads BGR image
+    img = cv2.imread('church.jpg', cv2.IMREAD_COLOR) # reads BGR image
     intensityMap, grey = intensity(img) # returns 2d array of intensity values and the greyscaled image
     cv2.imshow("kraus", grey)  # comment this out if you dont want to keep closing grey image
     cv2.waitKey(0)  # comment this out if you dont want to keep closing grey image
@@ -180,11 +178,6 @@ for y in range(0, 4):
 
     start_point = int(currx), int(curry)
     end_point = int(boxx+currx),int(boxy+curry)
-
-
-
-
-
 
     color = (0, 255, 0)
 
