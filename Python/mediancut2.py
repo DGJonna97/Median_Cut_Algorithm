@@ -23,11 +23,11 @@ def intensity(img):
 
 
 # Top left = (0,0), Bottom left = (0,1), Top right = (1,0), Bottom right = (1,1)
-def normalize_coordinates(row_i, col_j, img):
-    num_rows, num_cols = img.shape[:2]
-    x = col_j/(num_cols - 1.)
-    y = row_i/(num_rows - 1.)
-    return x, y # returns x and y values between 0 and 1
+#def normalize_coordinates(row_i, col_j, img):
+#    num_rows, num_cols = img.shape[:2]
+#    x = col_j/(num_cols - 1.)
+#    y = row_i/(num_rows - 1.)
+#    return x, y # returns x and y values between 0 and 1
 
 
 def SAT(region):
