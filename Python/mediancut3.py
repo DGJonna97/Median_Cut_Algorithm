@@ -1,6 +1,7 @@
 import struct
 import cv2
 import numpy as np
+import math
 
 
 def intensity(img):
@@ -20,8 +21,25 @@ def intensity(img):
         tempvalues.append(row)
     print("OG img shape " + str( np.shape(img)))
     print("intensity values shape " + str(np.shape(tempvalues)))
-
+    tempvalues = mmt(tempvalues, img)
+    #greyimg = mmt(greyimg)
     return tempvalues, greyimg # returns 2d array of intensity values and the greyscaled img
+
+
+def mmt(intensitymap, img):
+    height = int(img.shape[0])
+    x = np.linspace(-(math.pi), math.pi, height)
+    #print(x)
+    x = np.reshape(x, (height, 1))
+    
+    w = abs(np.cos(x))
+   # print("w: " + str(np.shape(w)))
+    #print("x: " + str(np.shape(x)))
+    #print("intens: " + str(np.shape(intensitymap)))
+    intensitymap = np.multiply(w, intensitymap)
+    
+    return intensitymap
+
 
 def findmean(xMin, xMax, yMin, yMax, img):
 
@@ -31,9 +49,9 @@ def findmean(xMin, xMax, yMin, yMax, img):
         for y in range(yMin, yMax):
             pixel = img[y][x]
             mean.append(pixel)
-    print("1" + str(mean))
-    print("2" + str(mean)[0])
-    print("3" + str(mean)[0][0])
+    #print("1" + str(mean))
+    #print("2" + str(mean)[0])
+    #print("3" + str(mean)[0][0])
     return np.mean(mean)
 
 
@@ -49,7 +67,7 @@ def SAT(region):
 
 def mediancut():
     global img
-    img = cv2.imread('cat.jpg', cv2.IMREAD_COLOR) # reads BGR image
+    img = cv2.imread('cheese.jpg', cv2.IMREAD_COLOR) # reads BGR image
     intensityMap, grey = intensity(img) # returns 2d array of intensity values and the greyscaled image
    # cv2.imshow("kraus", grey)  # comment this out if you dont want to keep closing grey image
    # cv2.waitKey(0)  # comment this out if you dont want to keep closing grey image
@@ -103,6 +121,8 @@ def step3(xMin, xMax, yMin, yMax, iterations, img, grey):
 
     lx = xMax - xMin;
     ly = yMax - yMin;
+    
+    
 
     if ((lx > 2) and (ly > 2) and (iterations > 0)):
         firstsum = newsum(xMin, xMax, yMin, yMax, img)
