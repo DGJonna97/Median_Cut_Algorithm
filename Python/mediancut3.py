@@ -23,10 +23,23 @@ def intensity(img):
 
     return tempvalues, greyimg # returns 2d array of intensity values and the greyscaled img
 
+def findmean(xMin, xMax, yMin, yMax, img):
+
+    mean = []
+
+    for x in range(xMin, xMax):
+        for y in range(yMin, yMax):
+            pixel = img[y][x]
+            mean.append(pixel)
+    print("1" + str(mean))
+    print("2" + str(mean)[0])
+    print("3" + str(mean)[0][0])
+    return np.mean(mean)
+
 
 def SAT(region):
 
-
+   # print(np.shape(region))
     # calculate a sum area table of the input region
     sum = np.cumsum(region, axis=0)  # get the sum of one dimension
     sum = np.cumsum(sum, axis=1)  # get the sum of the other dimension
@@ -36,7 +49,7 @@ def SAT(region):
 
 def mediancut():
     global img
-    img = cv2.imread('cheese.jpg', cv2.IMREAD_COLOR) # reads BGR image
+    img = cv2.imread('cat.jpg', cv2.IMREAD_COLOR) # reads BGR image
     intensityMap, grey = intensity(img) # returns 2d array of intensity values and the greyscaled image
    # cv2.imshow("kraus", grey)  # comment this out if you dont want to keep closing grey image
    # cv2.waitKey(0)  # comment this out if you dont want to keep closing grey image
@@ -44,30 +57,43 @@ def mediancut():
     #regionList.append(intensityMap)  # step 1
     #step3(regionList, 4, grey)
     r,c = np.shape(intensityMap)
-    step3(1, c, 1, r, 4, intensityMap, grey)
+    step3(1, c, 1, r, 6, intensityMap, grey)
 
     cv2.imshow("kraus", grey)
     cv2.waitKey(0)
 
 
-def createregion(xMin, xMax, yMin, yMax, img):
+def newsum(xMin, xMax, yMin, yMax, img):
 
     region=[]
-    global x
-    global y
 
-    x =xMin
-    y= yMin
-    for x in range (xMax):
+    sum = []
+    if(xMin==xMax):
+        row = []
+        for y in range(yMin, yMax):
+            pixel = img[y][xMin]
+            sum.append(pixel)
+        return np.sum(sum)
+
+    if (yMin == yMax):
+        row = []
+        for x in range(xMin, xMax):
+            pixel = img[yMin][x]
+            sum.append(pixel)
+        #region.append(sum)
+        return np.sum(sum)
+
+
+    for x in range (xMin, xMax):
         #print("x: " + str(x) + " xmax-2: "+ str(xMax-2))
         row = []
-        for y in range(yMax):
+        for y in range(yMin, yMax):
             #print("x" + str(x)+" y " +str(y))
 
             pixel = img[y][x]
-            row.append(pixel)
-        region.append(row)
-    return region
+            sum.append(pixel)
+       # region.append(row)
+    return np.sum(sum)
 
 
 def step3(xMin, xMax, yMin, yMax, iterations, img, grey):
@@ -79,8 +105,8 @@ def step3(xMin, xMax, yMin, yMax, iterations, img, grey):
     ly = yMax - yMin;
 
     if ((lx > 2) and (ly > 2) and (iterations > 0)):
-        region1 = createregion(xMin, xMax, yMin, yMax, img)
-        firstsum = SAT(region1)
+        firstsum = newsum(xMin, xMax, yMin, yMax, img)
+        #firstsum = SAT(region1)
         pivot=-1
 
         if (lx > ly):
@@ -89,13 +115,13 @@ def step3(xMin, xMax, yMin, yMax, iterations, img, grey):
             i = xMin
             for i in range(xMin,xMax - 1):
                # print(np.shape(img))
-                region2 = createregion(xMin,i,yMin,yMax,img)
-                sum = SAT(region2)
+                sum = newsum(xMin,i,yMin,yMax,img)
+                #sum = SAT(region2)
 
-                value1 = np.max(firstsum)
-                value2 = np.max(sum)
+               # value1 = np.max(firstsum)
+                #value2 = np.max(sum)
 
-                if value2 >= (value1 - value2):
+                if sum >= (firstsum - sum):
                     pivot = i
                     break
 
@@ -111,13 +137,13 @@ def step3(xMin, xMax, yMin, yMax, iterations, img, grey):
             i = yMin
             for i in range (yMin, yMax - 1):
                 # print(np.shape(img))
-                region2 = createregion(xMin, xMax, yMin, i, img)
-                sum = SAT(region2)
+                sum = newsum(xMin, xMax, yMin, i, img)
+                #sum = SAT(region2)
 
-                value1 = np.max(firstsum)
-                value2 = np.max(sum)
+                #value1 = np.max(firstsum)
+                #value2 = np.max(sum)
 
-                if value2 >= (value1 - value2):
+                if sum >= (firstsum - sum):
                     pivot = i
                     break
 
@@ -131,9 +157,16 @@ def step3(xMin, xMax, yMin, yMax, iterations, img, grey):
     else:
 
         print("Region: \n" + "xmin: " + str(xMin) + " xMax: " + str(xMax) + "\nYmin: " + str(yMin) +" Ymax: " + str(yMax))
-        cv2.rectangle(grey, (xMin,yMin), (xMax,yMax), (0,254,0), thickness=3)
-        cv2.imshow("kraus", grey)
-        cv2.waitKey(0)
+        #cv2.line(img, startpoint1, endpoint1, color, thickness)
+        cv2.rectangle(grey, (xMin, yMin), (xMax, yMax), (0,254,0), thickness=1)
+        mean = findmean(xMin,xMax,yMin,yMax,img)
+        print(mean)
+        #center_coordinatesx = int(xMax/2)
+        #center_coordinatesy= int(yMax/2)
+       # print(center_coordinatesx,center_coordinatesy)
+        #cv2.circle(grey, (center_coordinatesx,center_coordinatesy), 3, (0,0,255), 1)
+       # cv2.imshow("kraus", grey)
+        #cv2.waitKey(0)
     # step 3
     """if iterations > 0:  # n
         # step 2
