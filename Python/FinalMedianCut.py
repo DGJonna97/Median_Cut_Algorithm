@@ -7,22 +7,10 @@ import math
 def intensity(img):
     # loop trough every pixel and modify the color values, before adding them together into intensity
     print("Finding intensity values of input image...")
-    width = int(img.shape[1])
-    height = int(img.shape[0])
-    tempvalues = []
-    greyimg = img  # greyscaled pic
-    for i in range(0, height):
-        row = []
-        for j in range(0, width):
-            pixel = img[i, j]
-            pixelIntensity = 0.2125 * pixel[2] + 0.7154 * pixel[1] + 0.0721 * pixel[0]  # BGR image
-            greyimg[i, j] = pixelIntensity
-            row.append(pixelIntensity)
-        tempvalues.append(row)
-    #print("OG img shape " + str(np.shape(img)))
-    #print("intensity values shape " + str(np.shape(tempvalues)))
 
-    return tempvalues, greyimg  # returns 2d array of intensity values and the greyscaled img
+    for pixel in img:
+        0.2125 * pixel[2] + 0.7154 * pixel[1] + 0.0721 * pixel[0]
+    return img[:, :, 0], img  # returns 2d array of intensity values and the greyscaled img
 
 
 def scaleforcos(intensitymap, img):
@@ -70,25 +58,9 @@ def drawlights(xMin, xMax, yMin, yMax, grey):
 
 def SAT(xMin, xMax, yMin, yMax, img):
     # Calculates a sum area table of the input region
-    sum = []
-    if xMin == xMax:
-        for y in range(yMin, yMax):
-            pixel = img[y][xMin]
-            sum.append(pixel)
-        return np.sum(sum)
+    return np.sum(img[yMin:yMax, xMin:xMax])
 
-    if yMin == yMax:
-        for x in range(xMin, xMax):
-            pixel = img[yMin][x]
-            sum.append(pixel)
-        return np.sum(sum)
 
-    for x in range(xMin, xMax):
-        for y in range(yMin, yMax):
-            pixel = img[y][x]
-            sum.append(pixel)
-
-    return np.sum(sum)
 
 
 def estimatelights(xMin, xMax, yMin, yMax, iterations, img, grey, falloff):
