@@ -26,35 +26,47 @@ def scaleforcos(intensitymap, img):
 
     return intensitymap
 
+def tonemapdatshit(grey):
+    tonemap = grey
+    # img = cv2.imread('Bottles_Small.hdr', -1)  # reads BGR image
+    tonemapReinhard = cv2.createTonemapReinhard()
+    ldrReinhard = tonemapReinhard.process(tonemap)
+    img = np.clip(ldrReinhard * 255, 0, 255).astype('uint8')
+    global regions
+    for reg in regions:
+         xMin, xMax, yMin, yMax = reg
+         region_img = img[xMin:xMax, yMin:yMax]
 
-def drawlights(xMin, xMax, yMin, yMax, grey):
+         r = region_img[:,:,2]
+         g = region_img[:,:,1]
+         b = region_img[:,:,0]
+        
+         r = np.average(r)
+         g = np.average(g)
+         b = np.average(b)
+         print(b, g, r)
+        
+         center_coordinatesx = int(statistics.median([xMin, xMax]))
+         center_coordinatesy = int(statistics.median([yMin, yMax]))
+        
+         cv2.circle(img, (center_coordinatesx, center_coordinatesy), 5, (b,g,r), -1)
+         cv2.circle(img, (center_coordinatesx, center_coordinatesy), 5, (0,0,0), 1)
+    cv2.imshow("fucking shitty tonemap", img)
+
+def drawlights(grey):
     #draws a green circle at the center median of a regions x,y pos
-   # img = cv2.imread('Bottles_Small.hdr', -1)  # reads BGR image
-   # r=[]
-   # g=[]
-   # b=[]
-    #for i in range(yMin, yMax):
-    #    row = []
-    #    for j in range(xMin, xMax):
-     #       pixel = img[i, j]
-     #       #print(pixel)
-     #       #print(np.shape(pixel))
-      #      r.append(pixel[2])
-      #      g.append(pixel[1])
-      #      b.append(pixel[0])
-
-   # r = int(np.mean(r))
-   # g = int(np.mean(g))
-    #b = int(np.mean(b))
-
-    center_coordinatesx = int(statistics.median([xMin, xMax]))
-    center_coordinatesy = int(statistics.median([yMin, yMax]))
-    global lightcount
-    print("Placed light source  " + str(lightcount) + " at position (" + str(center_coordinatesx) + ", " + str(center_coordinatesy) + ")")
-    cv2.circle(grey, (center_coordinatesx, center_coordinatesy), 3, (0, 255, 0), 1)
-
-    lightcount+=1
-
+    color = grey
+    global regions
+    for reg in regions:
+          xMin, xMax, yMin, yMax = reg
+          center_coordinatesx = int(statistics.median([xMin, xMax]))
+          center_coordinatesy = int(statistics.median([yMin, yMax]))
+          global lightcount
+          print("Placed light source  " + str(lightcount) + " at position (" + str(center_coordinatesx) + ", " + str(center_coordinatesy) + ")")
+          cv2.circle(grey, (center_coordinatesx, center_coordinatesy), 5, (0,255,0), -1)
+          cv2.rectangle(color, (xMin, yMin), (xMax, yMax), (0, 255, 0), 1)
+    
+          lightcount+=1
 
 def SAT(xMin, xMax, yMin, yMax, img):
     # Calculates a sum area table of the input region
@@ -121,8 +133,10 @@ def estimatelights(xMin, xMax, yMin, yMax, iterations, img, grey, falloff):
     else:
        # print("="*40)
        # print("Region: \n" + "xmin: " + str(xMin) + " xMax: " + str(xMax) + "\nYmin: " + str(yMin) + " Ymax: " + str(yMax))
-        #cv2.rectangle(grey, (xMin, yMin), (xMax, yMax), (0, 254, 0), thickness=1)
-        drawlights(xMin, xMax, yMin, yMax, grey)
+       global regions
+       thisregion= xMin, xMax, yMin, yMax
+       regions.append(thisregion)
+       #drawlights(xMin, xMax, yMin, yMax, grey)
 
 
 def mediancut(lightSources, falloff=False):
@@ -137,14 +151,17 @@ def mediancut(lightSources, falloff=False):
 
     r, c = np.shape(intensityMap)
     print("Estimating " + str(lightSources) + " light sources...")
-
+   
     estimatelights(0, c, 0, r, round(np.log2(lightSources)), intensityMap, grey, falloff)
-
+    tonemapdatshit(grey)
+    drawlights(grey) 
     cv2.imshow("Median Cut light sources", grey)
     #cv2.imwrite("Median Cut light sources.jpg", grey) save the light source pic
     cv2.waitKey(0)
 
 
 global lightcount
+global regions
+regions = []
 lightcount = 1
-mediancut(lightSources=256, falloff=True)
+mediancut(lightSources=16, falloff=True)
