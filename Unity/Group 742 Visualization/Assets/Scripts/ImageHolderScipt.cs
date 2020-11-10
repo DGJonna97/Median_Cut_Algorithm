@@ -6,54 +6,40 @@ public class ImageHolderScipt : MonoBehaviour
 {
 
     public Sprite[] images;
-    
-    public int index = 0;
+   
     public Image imageobject;
-    public Button left;
-    public Button right;
+    public GameObject prefabbutton;
+    public GameObject panel;
     public Button analyse;
     public HelloRequester _helloRequester;
     // Start is called before the first frame update
     void Start()
     {
-       // imageobject = transform.GetChild(0).GetComponent<Image>().sprite;
-
+        // imageobject = transform.GetChild(0).GetComponent<Image>().sprite;
+       // maxsize = images.Length;
+        initializeUI();
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        imageobject.sprite = images[index];
-        //Debug.Log(imageobject.name);
+        
 
-        if (index == 0)
-        {
-            left.gameObject.SetActive(false);
-        }
-        else
-        {
-            left.gameObject.SetActive(true);
-        }
-
-        if (index == images.Length-1)
-        {
-            right.gameObject.SetActive(false);
-        }
-        else
-        {
-            right.gameObject.SetActive(true);
-        }
     }
 
     public void leftbuttonclick()
     {
-        index--;
+      //  currentmax -= maxsize;
+       // currentmin -= maxsize;
+        initializeUI();
     }
 
     public void rightbuttonclick()
     {
-        index++;
+      //  currentmax += maxsize;
+       // currentmin += maxsize;
+        initializeUI();
     }
 
     public void analysebuttonclick()
@@ -71,5 +57,40 @@ public class ImageHolderScipt : MonoBehaviour
     private void OnDestroy()
     {
         _helloRequester.Stop();
+    }
+
+    public void initializeUI()
+    {
+      
+       /*if (currentmax < maxsize)
+        {
+            right.gameObject.SetActive(true);
+        }
+        else
+        {
+            right.gameObject.SetActive(false);
+        }
+
+        if (currentmax > maxsize) 
+        {
+            left.gameObject.SetActive(true);
+        }
+        else
+        {
+            left.gameObject.SetActive(false);
+        }*/
+
+       
+        
+
+        Vector3 pos = new Vector2(800, 275);
+        for (int i = 0; i < images.Length; i++)
+        {
+            Sprite img = images[i];
+            GameObject b = Instantiate(prefabbutton, pos, Quaternion.identity, panel.transform);
+            b.GetComponent<Imagebutton>().imageobject = imageobject;
+            b.GetComponent<Image>().sprite = img;
+            pos.x += 100;
+        }  
     }
 }
