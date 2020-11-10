@@ -3,19 +3,18 @@
 #   Binds REP socket to tcp://*:5555
 #   Expects b"Hello" from client, replies with b"World"
 #
-
+import base64
 import time
 import zmq
-import base64
 import numpy as np
 import cv2
-#from cv2 import cv
-from lib import lib
 import FinalMedianCut
 
 context = zmq.Context()
 socket = context.socket(zmq.REP)
 socket.bind("tcp://*:5555")
+
+print("Server is listening...")
 
 while True:
     #  Wait for next request from client
@@ -37,5 +36,5 @@ while True:
     #  Send reply back to client
     #  In the real world usage, after you finish your work, send your output here
     print(regions)
-    socket.send_string((regions.__repr__()))
-
+    # regions = base64.b64decode(regions)
+    socket.send_string(str(regions))

@@ -71,6 +71,7 @@ def vizualize(img):
 
         lightcount += 1
 
+    return color
 
 def SAT(xMin, xMax, yMin, yMax, img):
     # Calculates a sum area table of the input region
@@ -141,7 +142,7 @@ def estimatelights(xMin, xMax, yMin, yMax, iterations, img, grey, falloff):
         # drawlights(xMin, xMax, yMin, yMax, grey)
 
 
-def mediancut(lightSources, falloff=False):
+def mediancut(lightSources, img, falloff=False):
     img = cv2.imread('Bottles_Small.hdr', -1)  # reads BGR image
     intensityMap, ogimg = intensity(img)  # returns 2d array of intensity values and the greyscaled image
 
@@ -156,12 +157,13 @@ def mediancut(lightSources, falloff=False):
 
     estimatelights(0, c, 0, r, round(np.log2(lightSources)), intensityMap, ogimg, falloff)
    # tonemapdatshit(ogimg)
-    vizualize(ogimg)
+    color = vizualize(ogimg)
     #cv2.imshow("Median Cut light sources", ogimg)
     # cv2.imwrite("Median Cut light sources.jpg", ogimg) save the light source pic
     #cv2.waitKey(0)
     global regions
-    return regions
+    # return regions
+    return color
 
 
 global lightcount

@@ -4,6 +4,8 @@ using NetMQ.Sockets;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System;
+using System.IO;
 /// <summary>
 ///     Example of requester who only sends Hello. Very nice guy.
 ///     You can copy this class and modify Run() to suits your needs.
@@ -51,14 +53,21 @@ public class HelloRequester : RunAbleThread
 
                 if (gotMessage)
                 {
-                    List<string> results = new List<string>();
-                    var output = message.Split('(', ')').Where((item, index) => index % 2 != 0).ToList();
-                    foreach (var reg in output)
-                    {
-                        Debug.Log(reg);
-                        
-                       
-                    }
+                    Debug.Log(message);
+                    byte[] imageBytes = Convert.FromBase64String(message);
+                    File.WriteAllBytes("test.png", imageBytes);
+                    //Texture2D tex = new Texture2D(100, 100);
+                    //tex.LoadImage(imageBytes);
+                    //Sprite sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100.0f);
+
+                    //List<string> results = new List<string>();
+                    //var output = message.Split('(', ')').Where((item, index) => index % 2 != 0).ToList();
+                    //foreach (var reg in output)
+                    //{
+                    //Debug.Log(reg);
+
+
+                    //}
                 }
             }
         }
