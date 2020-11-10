@@ -9,7 +9,7 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Mm]emoryCaptures/
-
+[Ll]ibrary/*
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
 
@@ -64,3 +64,32 @@ crashlytics-build.properties
 Unity/Group 742 Visualization/Library/
 Unity/Group 742 Visualization/Library/*
 Unity/Group 742 Visualization/Temp/*
+Unity/Group 742 Visualization/Library/
+Unity/Group 742 Visualization/Library/ArtifactDB
+Library/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild
+/[Bb]uilds/
+/[Ll]ibrary/
+sysinfo.txt
+*.stackdump
+/Assets/AssetStoreTools*
+*.apk
+*.unitypackage
+[Ee]xported[Oo]bj/
+.vs/
+/*.userprefs
+/*.csproj
+/*.pidb
+*.pidb.meta
+/*.suo
+/*.sln*
+/*.user
+/*.unityproj
+/*.booproj
+.consulo/
+/*.tmp
+/*.svd
+Unity/Group 742 Visualization/Library/PackageCache/*
+Unity/Group 742 Visualization/Library/PackageCache/

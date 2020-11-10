@@ -15,11 +15,14 @@ using System.IO;
 
 public class HelloRequester : RunAbleThread
 {
+    public Sprite finalsprite;
     private byte[] str;
-
-    public HelloRequester(byte[] str)
+    public ImageHolderScipt test;
+    public HelloRequester(byte[] str, ImageHolderScipt img)
     {
         this.str = str;
+        test = img;
+       
     }
 
     /// <summary>
@@ -53,13 +56,17 @@ public class HelloRequester : RunAbleThread
 
                 if (gotMessage)
                 {
-                    Debug.Log(message);
-                    byte[] imageBytes = Convert.FromBase64String(message);
-                    File.WriteAllBytes("test.png", imageBytes);
-                    //Texture2D tex = new Texture2D(100, 100);
-                    //tex.LoadImage(imageBytes);
-                    //Sprite sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100.0f);
-
+                    //Debug.Log(message);
+                    test.bytes = message;
+                    test.didithappen = true;
+                 
+                    //byte[] imageBytes = Convert.FromBase64String(message);
+                    //File.WriteAllBytes("test.png", message);
+                    /*Texture2D tex = new Texture2D(100, 100);
+                    tex.LoadImage(message);
+                    Sprite sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100.0f);
+                    finalsprite = sprite;
+                    Debug.Log(finalsprite.name);*/
                     //List<string> results = new List<string>();
                     //var output = message.Split('(', ')').Where((item, index) => index % 2 != 0).ToList();
                     //foreach (var reg in output)

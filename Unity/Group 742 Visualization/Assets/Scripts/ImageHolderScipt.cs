@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 public class ImageHolderScipt : MonoBehaviour
 {
-
+    public string bytes;
+    public bool didithappen = false;
     public Sprite[] images;
-   
+    public Sprite finalsprite;
     public Image imageobject;
     public GameObject prefabbutton;
     public GameObject panel;
@@ -16,18 +19,89 @@ public class ImageHolderScipt : MonoBehaviour
     void Start()
     {
         // imageobject = transform.GetChild(0).GetComponent<Image>().sprite;
-       // maxsize = images.Length;
-        initializeUI();
+        // maxsize = images.Length;
+        // initializeUI();
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (didithappen)
+        {
+            didithappen = false;
+            buildsprite(bytes);
+        }
 
     }
 
+    public void buildsprite(string message)
+    {
+
+        Texture2D Tex2D;
+        byte[] FileData;
+
+        if (File.Exists(message))
+        {
+            Debug.Log(message);
+            FileData = File.ReadAllBytes(message);
+            Tex2D = new Texture2D(2, 2);           // Create new "empty" texture
+
+
+            Texture2D SpriteTexture = new Texture2D(2, 2);
+            Sprite NewSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0, 0), 100);
+            imageobject.sprite = NewSprite;
+        }
+        else
+        {
+            Debug.Log("failed " + message);
+        }
+                    /* List<string> results = new List<string>();
+                      var output = message.Split('(', ')').Where((item, index) => index % 2 != 0).ToList();
+                      Texture2D texture = imageobject.sprite.texture;
+                      Color pixelColour = new Color(0, 255, 0, 1);
+                      foreach (var reg in output)
+                      {
+                          var output2 = reg.Split(',').ToList();
+                          int xmin = int.Parse(output2[0]);
+                          int xmax = int.Parse(output2[1]);
+                          int ymin = int.Parse(output2[2]);
+                          int ymax = int.Parse(output2[3]);
+                          Debug.Log(reg);
+                          Debug.Log(reg[0]);
+
+                          for (int i = xmin; i < xmax; i++)
+                          {
+                              for (int j = ymin; j < ymax; j++)
+                              {
+                                  texture.SetPixel(i, j, pixelColour);
+                                  Debug.Log(i.ToString()+" "+ j.ToString());
+
+                              }
+                          }
+
+                      }
+
+
+                      texture.Apply();
+                      Sprite sprite2 = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+                      Debug.Log("hej");
+                      imageobject.sprite = sprite2;
+              /*
+                      // Sprite sprite = Sprite.Create(texture, new Rect(0, 0, w, h), Vector2.zero);
+
+
+
+
+
+                  //  Debug.Log(bytes[4]);
+                  /* Texture2D tex = new Texture2D(100, 100);
+                   tex.LoadImage(bytes);
+                   Sprite sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100.0f);
+                   finalsprite = sprite;
+                   Debug.Log(finalsprite.name);*/
+                    
+    }
     public void leftbuttonclick()
     {
       //  currentmax -= maxsize;
@@ -42,7 +116,7 @@ public class ImageHolderScipt : MonoBehaviour
         initializeUI();
     }
 
-    public void analysebuttonclick()
+   /* public void analysebuttonclick()
     {
         Debug.Log("Sending " + imageobject.name + " to python");
 
@@ -50,13 +124,13 @@ public class ImageHolderScipt : MonoBehaviour
         byte[] jpegData = rawImageTexture.EncodeToJPG();
         //Debug.Log(jpegData.ToString());
 
-        _helloRequester = new HelloRequester(jpegData);
+        _helloRequester = new HelloRequester(jpegData, tester);
         _helloRequester.Start();
-    }
+    }*/
 
     private void OnDestroy()
     {
-        _helloRequester.Stop();
+        //_helloRequester.Stop();
     }
 
     public void initializeUI()

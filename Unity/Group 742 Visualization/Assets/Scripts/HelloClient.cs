@@ -23,6 +23,6 @@ public class HelloClient : MonoBehaviour
 
     private void OnDestroy()
     {
-        _helloRequester.Stop();
+        //_helloRequester.Stop();
     }
 }

@@ -6,6 +6,7 @@ public class ScreenshotFunction : MonoBehaviour
 {
     public string screenshotName = "test";
     public HelloRequester _helloRequester;
+    public ImageHolderScipt test;
     
     // Update is called once per frame
     void Update()
@@ -19,7 +20,7 @@ public class ScreenshotFunction : MonoBehaviour
             byte[] jpegData = testImage.EncodeToJPG();
             //Debug.Log(jpegData.ToString());
 
-            _helloRequester = new HelloRequester(jpegData);
+            _helloRequester = new HelloRequester(jpegData, test);
             _helloRequester.Start();
         }
     }
