@@ -8,12 +8,12 @@ import scipy as SP
 
 
 def main():
-    img = cv2.imread('Bottles_small.hdr', -1)
+    img = cv2.imread('cheese.jpg', -1)
     img = intensity(img)
     cv2.imshow("Did it work?", img)
     cv2.waitKey(0)
-    # mean = kmeans(img, 16, 100)
-    mean = importanceSampling(img)
+    mean = kmeans(img, 16, 100)
+    #mean = importanceSampling(img)
     print(mean)
 
 
@@ -42,6 +42,7 @@ def randdist(x, pdf, nvals):
 
     # input random values
     randv = np.random.uniform(size=nvals)
+    print(randv)
 
     # find where random values would go
     idx1 = np.searchsorted(cumpdf, randv)
@@ -75,8 +76,7 @@ def kmeans(x, k, n_iter=100):
         Mean values for each k-clusters.
     '''
     # Pick k random points as initial values
-    mean = np.random.choice(len(x), size=k, replace=False)
-    x, y = np.unravel_index(mean, k)
+    mean = x[np.random.choice(len(x), size=k, replace=False)]
 
     # Repeat:
     for _ in range(n_iter):
