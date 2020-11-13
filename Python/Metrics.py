@@ -7,14 +7,26 @@ import scipy
 
 def positionMetric(sample, mean):
     # u and v are the unit vectors representing the positions of the samples u and v
-    dot = np.dot(mean,sample)
-    mag = np.linalg.norm(sample)*np.linalg.norm(mean)
-    magnitude = np.sqrt(np.power(mean[0],2 )+ np.power(mean[1],2 ) ) *  np.sqrt(np.power(sample[0], 2) + np.power(sample[1], 2))
 
-    angle = np.arccos(dot/magnitude)/np.pi
+    """  dot = np.dot(mean, sample)
+    mag = np.linalg.norm(sample) * np.linalg.norm(mean)
+    magnitude = np.sqrt(np.power(mean[0], 2) + np.power(mean[1], 2)) * np.sqrt(np.power(sample[0], 2) + np.power(sample[1], 2))
 
+    angle = np.arccos(dot / magnitude) / np.pi
+ """
+    anglematrix=[]
+    for i in range(0,len(sample)):
+        sam = sample[i]
 
-    return angle
+        dot = np.dot(mean,sam)
+        mag = np.linalg.norm(sample)*np.linalg.norm(mean)
+        magnitude = np.sqrt(np.power(mean[0],2 )+ np.power(mean[1],2 ) ) *  np.sqrt(np.power(sample[0], 2) + np.power(sample[1], 2))
+
+        angle = np.arccos(dot/magnitude)/np.pi
+        angle = np.dot(angle,mag)
+        anglematrix.append(angle)
+
+    return anglematrix
 
 
 def luminanceMetric(intensitymap, samples, mean):
@@ -29,6 +41,8 @@ def luminanceMetric(intensitymap, samples, mean):
 def main(intensitymap, samples, mean ):
     pos = positionMetric(samples, mean)
     lum = luminanceMetric(intensitymap, samples, mean)
+
+
     distancemeasure = pos+lum
     return distancemeasure
 #mean = [1,0]

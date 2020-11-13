@@ -12,10 +12,10 @@ import Metrics
 def main():
     img = cv2.imread('Bottles_Small.hdr', -1)
     img = intensity(img)
-    cv2.imshow("Did it work?", img)
-    cv2.waitKey(0)
-    x = ImportanceSampling.importanceSampling(img, 1024)
-    mean = kmeans(x, img, 16)
+   # cv2.imshow("Did it work?", img)
+   # cv2.waitKey(0)
+    imgout,x = ImportanceSampling.importanceSampling(img, 1024)
+    mean = kmeans(x, 16,img)
     #mean = importanceSampling(img)
     print(mean)
 
@@ -80,7 +80,7 @@ def kmeans(x, k,intensitymap, n_iter=100):
     '''
     # Pick k random points as initial values
 
-    mean = x[np.random.choice(len(x), size=k, replace=False)]
+    mean = x[np.random.choice(len(x), size=2, replace=True)]
 
     # Repeat:
     for _ in range(n_iter):
