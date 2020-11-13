@@ -1,18 +1,21 @@
 import numpy as np
 from scipy.io import loadmat
 from scipy.stats import multivariate_normal as norm
+import matplotlib
 import matplotlib.pyplot as plt
 from sklearn.mixture import GaussianMixture as GMM
 import cv2
 import scipy as SP
-
+import ImportanceSampling
+import Metrics
 
 def main():
-    img = cv2.imread('cheese.jpg', -1)
+    img = cv2.imread('Bottles_Small.hdr', -1)
     img = intensity(img)
     cv2.imshow("Did it work?", img)
     cv2.waitKey(0)
-    mean = kmeans(img, 16, 100)
+    x = ImportanceSampling.importanceSampling(img, 1024)
+    mean = kmeans(x, img, 16)
     #mean = importanceSampling(img)
     print(mean)
 
@@ -57,7 +60,7 @@ def randdist(x, pdf, nvals):
     return randdist
 
 
-def kmeans(x, k, n_iter=100):
+def kmeans(x, k,intensitymap, n_iter=100):
     '''
     Simple k-means method for computing means from k clusters.
 
@@ -76,12 +79,14 @@ def kmeans(x, k, n_iter=100):
         Mean values for each k-clusters.
     '''
     # Pick k random points as initial values
+
     mean = x[np.random.choice(len(x), size=k, replace=False)]
 
     # Repeat:
     for _ in range(n_iter):
         # Compute the distance to the mean of each cluster
-        dis = np.linalg.norm(x[:, None] - mean, axis=-1)
+        #dis = np.linalg.norm(x[:, None] - mean, axis=-1)
+        dis = Metrics.main(intensitymap, x, mean)
         # Predict labels
         pred_lbl = np.argmax(dis, axis=-1)
 

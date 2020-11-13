@@ -8,20 +8,22 @@ public class ImageHolderScipt : MonoBehaviour
 {
     public string bytes;
     public bool didithappen = false;
-    public Sprite[] images;
+    public List<Sprite>  images;
     public Sprite finalsprite;
     public Image imageobject;
     public GameObject prefabbutton;
     public GameObject panel;
     public Button analyse;
     public HelloRequester _helloRequester;
+    Vector3 pos;
     // Start is called before the first frame update
     void Start()
     {
         // imageobject = transform.GetChild(0).GetComponent<Image>().sprite;
         // maxsize = images.Length;
         // initializeUI();
-
+        images = new List<Sprite>();
+        pos = new Vector2(100, 100);
     }
 
     // Update is called once per frame
@@ -46,11 +48,15 @@ public class ImageHolderScipt : MonoBehaviour
             Debug.Log(message);
             FileData = File.ReadAllBytes(message);
             Tex2D = new Texture2D(2, 2);           // Create new "empty" texture
-
-
-            Texture2D SpriteTexture = new Texture2D(2, 2);
-            Sprite NewSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0, 0), 100);
-            imageobject.sprite = NewSprite;
+            Tex2D.LoadImage(FileData);     
+           // Texture2D SpriteTexture = new Texture2D(2, 2);
+            Sprite NewSprite = Sprite.Create(Tex2D, new Rect(0, 0, Tex2D.width, Tex2D.height), new Vector2(0, 0), 100);
+            //imageobject.sprite = NewSprite;
+            images.Add(NewSprite);
+            GameObject b = Instantiate(prefabbutton, pos, Quaternion.identity, panel.transform);
+            b.GetComponent<Imagebutton>().imageobject = imageobject;
+            b.GetComponent<Image>().sprite = NewSprite;
+            pos.x += 100;
         }
         else
         {
@@ -135,36 +141,29 @@ public class ImageHolderScipt : MonoBehaviour
 
     public void initializeUI()
     {
-      
-       /*if (currentmax < maxsize)
-        {
-            right.gameObject.SetActive(true);
-        }
-        else
-        {
-            right.gameObject.SetActive(false);
-        }
 
-        if (currentmax > maxsize) 
-        {
-            left.gameObject.SetActive(true);
-        }
-        else
-        {
-            left.gameObject.SetActive(false);
-        }*/
+        /*if (currentmax < maxsize)
+         {
+             right.gameObject.SetActive(true);
+         }
+         else
+         {
+             right.gameObject.SetActive(false);
+         }
 
-       
+         if (currentmax > maxsize) 
+         {
+             left.gameObject.SetActive(true);
+         }
+         else
+         {
+             left.gameObject.SetActive(false);
+         }*/
+
         
-
-        Vector3 pos = new Vector2(800, 275);
-        for (int i = 0; i < images.Length; i++)
+        foreach (Sprite s in images)
         {
-            Sprite img = images[i];
-            GameObject b = Instantiate(prefabbutton, pos, Quaternion.identity, panel.transform);
-            b.GetComponent<Imagebutton>().imageobject = imageobject;
-            b.GetComponent<Image>().sprite = img;
-            pos.x += 100;
-        }  
+          
+        }
     }
 }

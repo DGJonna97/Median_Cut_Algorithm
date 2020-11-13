@@ -143,7 +143,9 @@ def estimatelights(xMin, xMax, yMin, yMax, iterations, img, grey, falloff):
 
 
 def mediancut(lightSources, img, falloff=False):
-    img = cv2.imread('Bottles_Small.hdr', -1)  # reads BGR image
+    global regions
+    regions=[]
+    #img = cv2.imread('Bottles_Small.hdr', -1)  # reads BGR image
     intensityMap, ogimg = intensity(img)  # returns 2d array of intensity values and the greyscaled image
 
     if falloff:
@@ -161,7 +163,7 @@ def mediancut(lightSources, img, falloff=False):
     #cv2.imshow("Median Cut light sources", ogimg)
     # cv2.imwrite("Median Cut light sources.jpg", ogimg) save the light source pic
     #cv2.waitKey(0)
-    global regions
+
     # return regions
     return color
 
