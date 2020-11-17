@@ -29,12 +29,15 @@ def positionMetric(sample, mean):
     return anglematrix
 
 
+
 def luminanceMetric(intensitymap, samples, mean):
     #The luminance metric can be defined by the difference in the
     #luminance between two samples. This can then be limited to
     #the range [0,1] by normalising
-    lumu  = intensitymap[mean[0], mean[1]]
-    lumv = intensitymap[samples[0], samples[1]]
+
+
+    lumu  = intensitymap[mean[0][0], mean[1][0]]
+    lumv = intensitymap[samples[0][0], samples[0][0]]
     lum = np.abs(lumu-lumv)/np.max(intensitymap)
     return lum
 
