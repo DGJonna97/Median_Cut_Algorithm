@@ -1,31 +1,52 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class arrayToLigths : MonoBehaviour
 {
     // Start is called before the first frame update
     public GameObject prefablight;
     public Cubemap cm;
+    public Texture2D church;
     int h = 1000, w = 1000;
-    int r = 50;
+    public int r = 50;
+    /*public int[,] tempresults = new int[,] {
+        { 35, 53  },
+        { 119, 53 },
+        { 215, 53 },
+        { 312, 53 },
+        {  71, 159 },
+        { 71, 293 },
+        { 252, 165 },
+        { 252, 299 },
+        { 425, 90 },
+        { 529, 90 },
+        { 428, 278  },
+        { 532, 278 },
+        { 626, 59 },
+        { 716, 59 },
+        { 660, 184 },
+        { 660, 312 },
+    };*/
+
     public int[,] tempresults = new int[,] {
-        { 162, 82  },
-        { 162, 283 },
-        { 385, 132 },
-        { 385, 333 },
-        {  92, 545 },
-        { 281, 545 },
-        { 412, 464 },
-        { 412, 608 },
-        { 486, 162 },
-        { 486, 388 },
-        { 719, 89  },
-        { 719, 314 },
-        { 480, 486 },
-        { 480, 605 },
-        { 586, 569 },
-        { 785, 569 },
+        { 565, 291  },
+        { 165, 245 },
+        { 451, 50 },
+        { 57, 77 },
+        {  322, 63 },
+        { 699, 67 },
+        { 301, 187 },
+        { 438, 289 },
+        { 584, 145 },
+        { 510, 178 },
+        { 69, 311  },
+        { 82, 194 },
+        { 192, 78 },
+        { 688, 274 },
+        { 587, 49 },
+        { 274, 324 },
     };
 
     void Start()
@@ -80,8 +101,10 @@ public class arrayToLigths : MonoBehaviour
             float x = r * Mathf.Sin(polar) * Mathf.Cos(azim);
             float y = r * Mathf.Sin(polar) * Mathf.Sin(azim);
             float z = r * Mathf.Cos(polar);
-            
-            Instantiate(prefablight, new Vector3(x,y,z), Quaternion.identity);
+
+            Color churchLights = lightColors(inputx, inputy);
+            GameObject lights = Instantiate(prefablight, new Vector3(x,y,z), Quaternion.identity);
+           // lights.GetComponent<Light>().color = churchLights;
 
 //Vector2 post = sphere_coords(xycoordinates[i, 0], xycoordinates[i, 1]);
             //Vector3 post2 = new Vector3(post.x,0,post.y);
@@ -101,38 +124,10 @@ public class arrayToLigths : MonoBehaviour
     }
 
 
-    Vector3 UvTo3D(Vector2 uv)
+    Color lightColors(float x, float y)
     {
-        Mesh mesh = GetComponent<MeshFilter>().mesh;
-        int[] tris = mesh.triangles;
-        Vector2[] uvs = mesh.uv;
-        Vector3[] verts = mesh.vertices;
-        for (int i = 0; i < tris.Length; i += 3)
-        {
-            Vector2 u1 = uvs[tris[i]]; // get the triangle UVs
-            Vector2 u2 = uvs[tris[i + 1]];
-            Vector2 u3 = uvs[tris[i + 2]];
-            // calculate triangle area - if zero, skip it
-            float a = Area(u1, u2, u3); if (a == 0) continue;
-            // calculate barycentric coordinates of u1, u2 and u3
-            // if anyone is negative, point is outside the triangle: skip it
-            float a1 = Area(u2, u3, uv) / a; if (a1 < 0) continue;
-            float a2 = Area(u3, u1, uv) / a; if (a2 < 0) continue;
-            float a3 = Area(u1, u2, uv) / a; if (a3 < 0) continue;
-            // point inside the triangle - find mesh position by interpolation...
-            Vector3 p3D = a1 * verts[tris[i]] + a2 * verts[tris[i + 1]] + a3 * verts[tris[i + 2]];
-            // and return it in world coordinates:
-            return transform.TransformPoint(p3D);
-        }
-        // point outside any uv triangle: return Vector3.zero
-        return Vector3.zero;
-    }
-
-    float Area(Vector2 p1, Vector2 p2, Vector2 p3)
-    {
-        Vector2 v1 = p1 - p3;
-        Vector2 v2 = p2 - p3;
-        return (v1.x * v2.y - v1.y * v2.x) / 2;
+        // Texture2D ost = (Texture2D)church.mainTexture;
+           return church.GetPixel((int)x,(int) y);
     }
 
 }
