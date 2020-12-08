@@ -6,7 +6,7 @@ import math
 
 def intensity(img):
     # loop trough every pixel and modify the color values, before adding them together into intensity
-    print("Finding intensity values of input image...")
+    #print("Finding intensity values of input image...")
 
     for pixel in img:
         0.2125 * pixel[2] + 0.7154 * pixel[1] + 0.0721 * pixel[0]
@@ -14,7 +14,7 @@ def intensity(img):
 
 
 def scaleforcos(intensitymap, img):
-    print("Scaling the pixels of the input image by cosφ... ")
+    #print("Scaling the pixels of the input image by cosφ... ")
     # φ is the pixel’s angle of inclination...")
     height = int(img.shape[0])
     x = np.linspace(-(math.pi / 2), math.pi / 2, height)
@@ -28,8 +28,12 @@ def scaleforcos(intensitymap, img):
 
 
 def tonemapdatshit(ogimg):
-    tonemap = ogimg
-    # img = cv2.imread('Bottles_Small.hdr', -1)  # reads BGR image
+    colors = []
+    r2 = []
+    g2 = []
+    b2 = []
+    img = ogimg
+    tonemap = img
     tonemapReinhard = cv2.createTonemapReinhard()
     ldrReinhard = tonemapReinhard.process(tonemap)
     img = np.clip(ldrReinhard * 255, 0, 255).astype('uint8')
@@ -42,36 +46,38 @@ def tonemapdatshit(ogimg):
         g = region_img[:, :, 1]
         b = region_img[:, :, 0]
 
-        r = np.average(r)
-        g = np.average(g)
-        b = np.average(b)
+        r = int( np.average(r))
+        g = int( np.average(g) )
+        b = int (np.average(b) )
         print(b, g, r)
+        r2.append(r)
+        g2.append(g)
+        b2.append(b)
+        #center_coordinatesx = int(statistics.median([xMin, xMax]))
+        #center_coordinatesy = int(statistics.median([yMin, yMax]))
 
-        center_coordinatesx = int(statistics.median([xMin, xMax]))
-        center_coordinatesy = int(statistics.median([yMin, yMax]))
-
-        cv2.circle(img, (center_coordinatesx, center_coordinatesy), 5, (b, g, r), -1)
-        cv2.circle(img, (center_coordinatesx, center_coordinatesy), 5, (0, 0, 0), 1)
-    cv2.imshow("fucking shitty tonemap", img)
-
+        #cv2.circle(img, (center_coordinatesx, center_coordinatesy), 5, (b, g, r), -1)
+        #cv2.circle(img, (center_coordinatesx, center_coordinatesy), 5, (0, 0, 0), 1)
+    #cv2.imshow("fucking shitty tonemap", img)
+    return r2,g2,b2
 
 def vizualize(img):
     # draws a green circle at the center median of a regions x,y pos
-    color = img
+    r,g,b = tonemapdatshit(img)
     global regions
     for reg in regions:
         xMin, xMax, yMin, yMax = reg
         center_coordinatesx = int(statistics.median([xMin, xMax]))
         center_coordinatesy = int(statistics.median([yMin, yMax]))
         global lightcount
-        print("Placed light source  " + str(lightcount) + " at position (" + str(center_coordinatesx) + ", " + str(
-            center_coordinatesy) + ")")
-        cv2.circle(img, (center_coordinatesx, center_coordinatesy), 5, (0, 255, 0), -1)
-        cv2.rectangle(color, (xMin, yMin), (xMax, yMax), (0, 255, 0), 1)
+        #print("Placed light source  " + str(lightcount) + " at position (" + str(center_coordinatesx) + ", " + str(
+        #    center_coordinatesy) + ")")
+        #cv2.circle(img, (center_coordinatesx, center_coordinatesy), 5, (0, 255, 0), -1)
+        #cv2.rectangle(color, (xMin, yMin), (xMax, yMax), (0, 255, 0), 1)
 
         lightcount += 1
-
-    return color
+    #cv2.imwrite("inputImageMedianCut2.jpg", color)
+    return r,g,b
 
 def SAT(xMin, xMax, yMin, yMax, img):
     # Calculates a sum area table of the input region
@@ -155,16 +161,25 @@ def mediancut(lightSources, img, falloff=False):
     # cv2.waitKey(0)  # comment this out if you dont want to keep closing ogimg image
 
     r, c = np.shape(intensityMap)
-    print("Estimating " + str(lightSources) + " light sources...")
+    #print("Estimating " + str(lightSources) + " light sources...")
 
     estimatelights(0, c, 0, r, round(np.log2(lightSources)), intensityMap, ogimg, falloff)
-   # tonemapdatshit(ogimg)
-    color = vizualize(ogimg)
+
+    r,g,b = vizualize(ogimg)
     #cv2.imshow("Median Cut light sources", ogimg)
-    # cv2.imwrite("Median Cut light sources.jpg", ogimg) save the light source pic
+    #cv2.imwrite("Median Cut light sources.jpg", ogimg)
     #cv2.waitKey(0)
 
-    # return regions
+    centersx = []
+    centersy = []
+    for reg in regions:
+        xMin, xMax, yMin, yMax = reg
+        centersx.append( int(statistics.median([xMin, xMax])))
+        centersy.append( int(statistics.median([yMin, yMax])))
+
+    data_set = {"centerx": centersx,"centery": centersy, "red":r,  "green":g,  "blue":b}
+
+    return data_set
     return color
 
 
@@ -172,3 +187,8 @@ global lightcount
 global regions
 lightcount = 1
 regions =[]
+
+
+#img = cv2.imread('grace_probe.hdr', -1)
+#cv2.imwrite("inputImageMedianCut.hdr", img)
+#mediancut(16,img, False)

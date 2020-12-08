@@ -2,41 +2,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScreenshotFunction : MonoBehaviour
+
+namespace SimpleJSON
 {
-    public string screenshotName = "test";
-    public HelloRequester _helloRequester;
-    public ImageHolderScipt test;
-    public GameObject canvas;
-
-    private void Start()
+    public class ScreenshotFunction : MonoBehaviour
     {
-        
-    }
+        public string screenshotName = "test";
+        public HelloRequester _helloRequester;
+        public ImageHolderScipt test;
+        public GameObject canvas;
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
+        private void Start()
         {
-            StartCoroutine(CaptureScreen());
+
         }
-    }
 
-    public IEnumerator CaptureScreen()
-    {
-        yield return null;
-        canvas.SetActive(false);
-        yield return new WaitForEndOfFrame();
-        Texture2D testImage = ScreenCapture.CaptureScreenshotAsTexture();
-        canvas.SetActive(true);
-        // Debug.Log("Sending " + imageobject.name + " to python");
+        // Update is called once per frame
+        void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                StartCoroutine(CaptureScreen());
+            }
+        }
 
-        // Texture2D rawImageTexture = (Texture2D)imageobject.sprite.texture;
-        byte[] jpegData = testImage.EncodeToJPG();
-        //Debug.Log(jpegData.ToString());
+        public IEnumerator CaptureScreen()
+        {
+            yield return null;
+            canvas.SetActive(false);
+            yield return new WaitForEndOfFrame();
+            Texture2D testImage = ScreenCapture.CaptureScreenshotAsTexture();
+            canvas.SetActive(true);
 
-        _helloRequester = new HelloRequester(jpegData, test);
-        _helloRequester.Start();
+            // Debug.Log("Sending " + imageobject.name + " to python");
+
+            // Texture2D rawImageTexture = (Texture2D)imageobject.sprite.texture;
+            byte[] jpegData = testImage.EncodeToJPG();
+            //Debug.Log(jpegData.ToString());
+
+            //_helloRequester = new HelloRequester(jpegData, test);
+            //_helloRequester.Start();
+        }
     }
 }

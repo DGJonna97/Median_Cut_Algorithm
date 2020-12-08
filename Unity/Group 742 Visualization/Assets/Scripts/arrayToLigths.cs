@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[Serializable]
 public class arrayToLigths : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -11,6 +13,8 @@ public class arrayToLigths : MonoBehaviour
     public Texture2D church;
     int h = 1000, w = 1000;
     public int r = 50;
+    public string regions;
+    public GameObject lightdad;
     /*public int[,] tempresults = new int[,] {
         { 35, 53  },
         { 119, 53 },
@@ -51,7 +55,7 @@ public class arrayToLigths : MonoBehaviour
 
     void Start()
     {
-        genligths(tempresults);
+        
     }
 
     Vector2 toPolar(Vector2 xy, int RadialScale, int LengthScale)
@@ -80,20 +84,29 @@ public class arrayToLigths : MonoBehaviour
                 //draw invisible ray cast/vector
                 Debug.DrawLine(ray.origin, hit.point);
                 //log hit area to the console
-                Debug.Log(hit.point);
+                
 
             }
         }
     }
 
-    void genligths(int[,] xycoordinates)
+    public void genligths(List<int> centerxints, List<int> centeryints, List<int> redints, List<int> greenints, List<int> blueints)
     {
-        for (int i = 0; i < xycoordinates.Length/2; i++)
+        for (int i = 0; i < lightdad.transform.childCount; i++)
         {
-            Vector2 ost = new Vector2(xycoordinates[i, 0], xycoordinates[i, 1]);
-            Debug.Log(ost);
-            float inputx = xycoordinates[i, 0];
-            float inputy = xycoordinates[i, 1];
+            Transform c = lightdad.transform.GetChild(i);
+            Destroy(c.gameObject);
+        }
+
+        
+        for (int i = 0; i < centerxints.Count; i++)
+        {
+            Vector2 ost = new Vector2(centerxints[i], centeryints[i]);
+            
+            //Debug.Log(i);
+
+            float inputx = (float)ost.x;
+            float inputy = (float)ost.y;
 
             float azim = Mathf.Atan2( inputy, inputx) * Mathf.Rad2Deg;
             float polar = Mathf.Atan(inputy /inputx) * Mathf.Rad2Deg;
@@ -101,13 +114,13 @@ public class arrayToLigths : MonoBehaviour
             float x = r * Mathf.Sin(polar) * Mathf.Cos(azim);
             float y = r * Mathf.Sin(polar) * Mathf.Sin(azim);
             float z = r * Mathf.Cos(polar);
-
-            Color churchLights = lightColors(inputx, inputy);
-            GameObject lights = Instantiate(prefablight, new Vector3(x,y,z), Quaternion.identity);
-           // lights.GetComponent<Light>().color = churchLights;
+            
+            Color c = new Color((float)redints[i] / 255f, (float)greenints[i] / 255f, (float)blueints[i] / 255f);
+            GameObject lights = Instantiate(prefablight, new Vector3(x,y,z), Quaternion.identity, lightdad.transform);
+            lights.GetComponent<Light>().color = c;
 
 //Vector2 post = sphere_coords(xycoordinates[i, 0], xycoordinates[i, 1]);
-            //Vector3 post2 = new Vector3(post.x,0,post.y);
+//Vector3 post2 = new Vector3(post.x,0,post.y);
         }
 
 
