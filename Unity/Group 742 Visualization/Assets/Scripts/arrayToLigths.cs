@@ -10,11 +10,14 @@ public class arrayToLigths : MonoBehaviour
     // Start is called before the first frame update
     public GameObject prefablight;
     public Cubemap cm;
+    public Texture2D left;
+    public Texture2D right;
     public Texture2D church;
     int h = 1000, w = 1000;
     public int r = 50;
     public string regions;
     public GameObject lightdad;
+    Vector3 target;
     /*public int[,] tempresults = new int[,] {
         { 35, 53  },
         { 119, 53 },
@@ -55,7 +58,7 @@ public class arrayToLigths : MonoBehaviour
 
     void Start()
     {
-        
+        target = new Vector3(0, 0, 0);
     }
 
     Vector2 toPolar(Vector2 xy, int RadialScale, int LengthScale)
@@ -90,41 +93,110 @@ public class arrayToLigths : MonoBehaviour
         }
     }
 
-    public void genligths(List<int> centerxints, List<int> centeryints, List<int> redints, List<int> greenints, List<int> blueints)
+    public static double MapCoordinate(double i1, double i2, double w1,
+    double w2, double p)
     {
+        return ((p - i1) / (i2 - i1)) * (w2 - w1) + w1;
+    }
+
+    public void genligths(List<int> centerxints, List<int> centeryints, List<int> redints, List<int> greenints, List<int> blueints, Material pic)
+    {
+       // r = centerxints.Count;
+        Texture2D normalizer;
+        if (pic.name== "New Material 1")
+        {
+            normalizer = left;
+        }
+        else
+        {
+            normalizer = right;
+        }
+
+        int w = normalizer.width;
+        int h = normalizer.height;
+
         for (int i = 0; i < lightdad.transform.childCount; i++)
         {
             Transform c = lightdad.transform.GetChild(i);
             Destroy(c.gameObject);
         }
+        double phi0 = 0.0;
+        double phi1 = Math.PI;
+        double theta0 = 0.0;
+        double theta1 = 2.0 * Math.PI;
 
-        
+       
+
         for (int i = 0; i < centerxints.Count; i++)
         {
             Vector2 ost = new Vector2(centerxints[i], centeryints[i]);
+            double theta = MapCoordinate(0.0, w - 1,
+              theta1, theta0,ost.x);
+            double phi = MapCoordinate(0.0, h - 1, phi0,
+                phi1,ost.y);
+            // find the cartesian coordinates
+            double x = r * Math.Sin(phi) * Math.Cos(theta);
+            double y = r * Math.Sin(phi) * Math.Sin(theta);
+            double z = r * Math.Cos(phi);
+
+            GameObject lights = Instantiate(prefablight, new Vector3((float)x, (float)z,(float)y), Quaternion.identity, lightdad.transform);
+
+           // Color c = new Color((float)redints[i] / 255f, (float)greenints[i] / 255f, (float)blueints[i] / 255f);
+            Light l = lights.GetComponent<Light>();
+            //l.color = c;
+            l.intensity = intensityofpoint(ost.x, ost.y, normalizer)/((float)centerxints.Count/5f);
+
+
+            lights.transform.LookAt(target);
+            /*Vector2 ost = new Vector2(centerxints[i], centeryints[i]);
+            float r2 = r / h;
+
+            float longitude = ost.x / w;
+
+            float latitude = 2f * Mathf.Atan((float)Math.Exp(ost.y / r2)) - Mathf.PI / 2f;
+
+            Vector3 p = new Vector3(
+               r * Mathf.Cos(latitude) * Mathf.Cos(longitude),
+               r * Mathf.Cos(latitude) * Mathf.Sin(longitude),
+               r * Mathf.Sin(latitude));
+
+            GameObject lights = Instantiate(prefablight, p, Quaternion.identity, lightdad.transform);
+           
+
+            Vector2 ost = new Vector2(centerxints[i], centeryints[i]);
+
+             //Debug.Log(i);
+
+             float inputx = (float)ost.x/w; //needs to be normalized
+             float inputy = (float)ost.y/h;
+
+             float azim = Mathf.Atan2( inputx, inputy);
+             float polar = Mathf.Atan(inputx /inputy);
+
+             float x = r * Mathf.Cos(polar) * Mathf.Cos(azim);
+             float y = r * Mathf.Cos(polar) * Mathf.Sin(azim);
+             float z = r * Mathf.Sin(polar);
+
             
-            //Debug.Log(i);
+             //point them to 0,0  offset by -5 to 0.5
 
-            float inputx = (float)ost.x;
-            float inputy = (float)ost.y;
-
-            float azim = Mathf.Atan2( inputy, inputx) * Mathf.Rad2Deg;
-            float polar = Mathf.Atan(inputy /inputx) * Mathf.Rad2Deg;
-     
-            float x = r * Mathf.Sin(polar) * Mathf.Cos(azim);
-            float y = r * Mathf.Sin(polar) * Mathf.Sin(azim);
-            float z = r * Mathf.Cos(polar);
-            
-            Color c = new Color((float)redints[i] / 255f, (float)greenints[i] / 255f, (float)blueints[i] / 255f);
-            GameObject lights = Instantiate(prefablight, new Vector3(x,y,z), Quaternion.identity, lightdad.transform);
-            lights.GetComponent<Light>().color = c;
-
-//Vector2 post = sphere_coords(xycoordinates[i, 0], xycoordinates[i, 1]);
-//Vector3 post2 = new Vector3(post.x,0,post.y);
+             //Vector2 post = sphere_coords(xycoordinates[i, 0], xycoordinates[i, 1]);
+             //Vector3 post2 = new Vector3(post.x,0,post.y); */
         }
 
 
     }
+    float intensityofpoint(float x, float y, Texture2D image)
+    {
+        Color c = image.GetPixel((int)x, (int)y);
+        c.r = 0.2125f * c.r;
+        c.g = 0.7154f * c.g;
+        c.b = 0.0721f * c.b;
+        float intensity = c.r + c.g + c.b;
+        return intensity;
+    }
+
+
     Vector3 sphere_coords(int x,int y)
     {
         float theta = 2 * (float)x / (float)w - 1;

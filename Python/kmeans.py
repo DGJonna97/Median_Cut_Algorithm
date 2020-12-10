@@ -4,7 +4,7 @@ import cv2
 import ImportanceSampling
 from sklearn.cluster import KMeans
 import time
-import FinalMedianCut
+
 
 def intensity(img):
     """
@@ -72,6 +72,19 @@ def findcolor(label):
         30: 'rosybrown',
         31: 'hotpink',
     }.get(label, 0)
+
+def color(img, centroids):
+    tonemap = np.copy(img)
+    tonemapReinhard = cv2.createTonemapReinhard()
+    ldrReinhard = tonemapReinhard.process(tonemap)
+    img2 = np.clip(ldrReinhard * 255, 0, 255).astype('uint8')
+    r,g,b = [],[],[]
+    for cen in centroids:
+
+        r.append(img2[int(cen[1]), int(cen[0]), 2])
+        g.append(img2[int(cen[1]), int(cen[0]), 1])
+        b.append(img2[int(cen[1]), int(cen[0]), 0])
+    return r,g,b
 
 
 def plotresults(labels, samples, kmeans, img):
@@ -183,21 +196,30 @@ def main(img, nSamples, nLightSources, weights=False):
         pictitle = " without weights"
         labels = kmeans.predict(samples.T)
 
-    print("done with kmeans in  --- %s seconds ---" % (time.time() - start_time))
+    #print("done with kmeans in  --- %s seconds ---" % (time.time() - start_time))
 
-    result = plotresults(labels, samples, kmeans, img)
-    print("done with plotting in  --- %s seconds ---" % (time.time() - start_time))
+    #result = plotresults(labels, samples, kmeans, img)
+    #print("done with plotting in  --- %s seconds ---" % (time.time() - start_time))
 
     #cv2.imshow("original pic", img)
     #cv2.imshow("samples pic" + pictitle, samplepic)
     #cv2.imshow("Clusters on original pic" + pictitle, result)
+    #cv2.imwrite("original pic.jpg", img)
+    #cv2.imwrite("samples pic.jpg", samplepic)
+    #cv2.imwrite("Clusters on original pic.jpg", result)
     #plt.show()
     #cv2.waitKey(0)
 
     centroids = kmeans.cluster_centers_
-    r,g,b = FinalMedianCut.tonemapdatshit(img)
-    data_set = {"centerx": centroids[:,0], "centery": centroids[0,:], "red": r, "green": g, "blue": b}
-    return data_set
+    #r,g,b = color(img, centroids)
+    #return centroids
+    x= []
+    y= []
+    for cen in centroids:
+        x.append(int(cen[0]))
+        y.append(int(cen[1]))
+    dataset = {"centerx": x, "centery": y, "red": 0, "green": 0, "blue": 0}
+    return dataset
 
-#img = cv2.imread('cat.jpg', -1)
-#main(img, 1024, 16, True)
+#img = cv2.imread('stpetersangular.hdr', -1)
+#main(img,1024,32,True)

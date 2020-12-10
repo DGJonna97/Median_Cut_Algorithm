@@ -22,6 +22,7 @@ namespace SimpleJSON
         public Button analyse;
         public HelloRequester _helloRequester;
         public arrayToLigths arr;
+        public canvasscript canscp;
         Vector3 pos;
         public Dropdown method;
         public Dropdown nLigths;
@@ -48,7 +49,17 @@ namespace SimpleJSON
                 didithappen = false;
                 arrtol2 arr = new arrtol2();
                 arr.message = bytes;
-                arr.go(arrtoligs);
+               
+
+                if (chosenimage.value == 0)
+                {
+                    arr.cm = left;
+                }
+                else
+                {
+                    arr.cm = right;
+                }
+                 arr.go(arrtoligs);
             }
 
         }
@@ -178,10 +189,14 @@ namespace SimpleJSON
             }
             
             DynamicGI.UpdateEnvironment();
-
+            canscp.m = m;
+            canscp.nLig = nLig;
+            canscp.cImg = cImg;
+            
 
             _helloRequester = new HelloRequester(m,nLig,cImg, this);
             _helloRequester.Start();
+            //canscp.disable();
         }
     }
 }

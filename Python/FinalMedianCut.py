@@ -24,19 +24,19 @@ def scaleforcos(intensitymap, img):
     # print("x: " + str(np.shape(x)))
     intensitymap = np.multiply(w, intensitymap)
 
-    return intensitymap
+    return intensitymap,w
 
 
 def tonemapdatshit(ogimg):
     colors = []
+    ogimg = cv2.imread("grace_probebetter.hdr", -1)
     r2 = []
     g2 = []
     b2 = []
-    img = ogimg
-    tonemap = img
-    tonemapReinhard = cv2.createTonemapReinhard()
-    ldrReinhard = tonemapReinhard.process(tonemap)
-    img = np.clip(ldrReinhard * 255, 0, 255).astype('uint8')
+    tonemapDurand = cv2.TonemapDurand(2.2)
+    ldrDurand = tonemapDurand.process(ogimg)
+
+    img = np.clip(ldrDurand * 255, 0, 255).astype('uint8')
     global regions
     for reg in regions:
         xMin, xMax, yMin, yMax = reg
@@ -49,7 +49,7 @@ def tonemapdatshit(ogimg):
         r = int( np.average(r))
         g = int( np.average(g) )
         b = int (np.average(b) )
-        print(b, g, r)
+
         r2.append(r)
         g2.append(g)
         b2.append(b)
@@ -63,7 +63,7 @@ def tonemapdatshit(ogimg):
 
 def vizualize(img):
     # draws a green circle at the center median of a regions x,y pos
-    r,g,b = tonemapdatshit(img)
+    #r,g,b = tonemapdatshit(img)
     global regions
     for reg in regions:
         xMin, xMax, yMin, yMax = reg
@@ -73,25 +73,33 @@ def vizualize(img):
         #print("Placed light source  " + str(lightcount) + " at position (" + str(center_coordinatesx) + ", " + str(
         #    center_coordinatesy) + ")")
         #cv2.circle(img, (center_coordinatesx, center_coordinatesy), 5, (0, 255, 0), -1)
-        #cv2.rectangle(color, (xMin, yMin), (xMax, yMax), (0, 255, 0), 1)
+        #cv2.rectangle(img, (xMin, yMin), (xMax, yMax), (0, 255, 0), 1)
 
         lightcount += 1
     #cv2.imwrite("inputImageMedianCut2.jpg", color)
-    return r,g,b
+
+    return 0,0,0
 
 def SAT(xMin, xMax, yMin, yMax, img):
     # Calculates a sum area table of the input region
     return np.sum(img[yMin:yMax, xMin:xMax])
 
 
-def estimatelights(xMin, xMax, yMin, yMax, iterations, img, grey, falloff):
+def estimatelights(xMin, xMax, yMin, yMax, iterations, img, grey, falloff,w):
     # step 3, create regions compare their SAT, make sure there is the same SAT across regions, then make a cut
     lx = xMax - xMin
     ly = yMax - yMin
 
     if falloff:
         # do the cos with x calculations
-        1 + 1
+      #  centerx = int((xMax + xMin)/2)
+       # centery= int((yMax + yMin)/2)
+        #weight = w[centerx-1]
+        #weighty= w[centery - 1]
+        #lx= weight*lx
+        #ly = weighty*ly
+        1+1
+
     # height = lx
     # x = np.linspace(-(math.pi), math.pi, height)
     # print(x)
@@ -103,7 +111,7 @@ def estimatelights(xMin, xMax, yMin, yMax, iterations, img, grey, falloff):
     # print("intens: " + str(np.shape(intensitymap)))
     # lx = np.multiply(w, img[xMin:xMax])
 
-    if (lx > 2 and ly > 2) and (iterations > 0):
+    if (lx > 0.1 and ly > 2) and (iterations > 0):
         totalsum = SAT(xMin, xMax, yMin, yMax, img)
         cutpoint = -1
 
@@ -120,8 +128,8 @@ def estimatelights(xMin, xMax, yMin, yMax, iterations, img, grey, falloff):
                 cutpoint = xMax - 1
 
             iterations = iterations - 1
-            estimatelights(xMin, cutpoint, yMin, yMax, iterations, img, grey, falloff)
-            estimatelights(cutpoint + 1, xMax, yMin, yMax, iterations, img, grey, falloff)
+            estimatelights(xMin, cutpoint, yMin, yMax, iterations, img, grey, falloff,w)
+            estimatelights(cutpoint + 1, xMax, yMin, yMax, iterations, img, grey, falloff,w)
 
         else:
             # cut on the Y - axis
@@ -136,8 +144,8 @@ def estimatelights(xMin, xMax, yMin, yMax, iterations, img, grey, falloff):
                 cutpoint = yMax - 1
 
             iterations = iterations - 1
-            estimatelights(xMin, xMax, yMin, cutpoint, iterations, img, grey, falloff)
-            estimatelights(xMin, xMax, cutpoint + 1, yMax, iterations, img, grey, falloff)
+            estimatelights(xMin, xMax, yMin, cutpoint, iterations, img, grey, falloff,w)
+            estimatelights(xMin, xMax, cutpoint + 1, yMax, iterations, img, grey, falloff,w)
 
     else:
         # print("="*40)
@@ -153,9 +161,9 @@ def mediancut(lightSources, img, falloff=False):
     regions=[]
     #img = cv2.imread('Bottles_Small.hdr', -1)  # reads BGR image
     intensityMap, ogimg = intensity(img)  # returns 2d array of intensity values and the greyscaled image
-
+    w=[]
     if falloff:
-        intensityMap = scaleforcos(intensityMap, ogimg)
+        intensityMap,w = scaleforcos(intensityMap, ogimg)
 
     # cv2.imshow("kraus", ogimg)  # comment this out if you dont want to keep closing ogimg image
     # cv2.waitKey(0)  # comment this out if you dont want to keep closing ogimg image
@@ -163,7 +171,7 @@ def mediancut(lightSources, img, falloff=False):
     r, c = np.shape(intensityMap)
     #print("Estimating " + str(lightSources) + " light sources...")
 
-    estimatelights(0, c, 0, r, round(np.log2(lightSources)), intensityMap, ogimg, falloff)
+    estimatelights(0, c, 0, r, round(np.log2(lightSources)), intensityMap, ogimg, falloff,w)
 
     r,g,b = vizualize(ogimg)
     #cv2.imshow("Median Cut light sources", ogimg)
@@ -188,7 +196,9 @@ global regions
 lightcount = 1
 regions =[]
 
+#img = cv2.resize(img, (256,256), interpolation = cv2.INTER_AREA)
 
-#img = cv2.imread('grace_probe.hdr', -1)
-#cv2.imwrite("inputImageMedianCut.hdr", img)
-#mediancut(16,img, False)
+#cv2.waitKey(0)
+img = cv2.imread('grace_probebetter.hdr', -1)
+mediancut(64, img, True)
+#cv2.imwrite("mediancutresult.jpg", img)
