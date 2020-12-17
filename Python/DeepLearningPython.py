@@ -23,7 +23,6 @@ from numpy import genfromtxt
 import tensorflow as tf
 
 
-
 def deep_learning(testImage,numLights): 
         
     model = tf.keras.models.load_model('Deep_Learning_Model')
@@ -35,19 +34,23 @@ def deep_learning(testImage,numLights):
     #ax.scatter(predictionResults[0,:16]*255.0,predictionResults[0,16:32]*255.0, c = '#ff7f0e')
     #plt.show()
     predictionResults = predictionResults*255
-    data_set = {"centerx": predictionResults[0,0:16], "centery": predictionResults[0,16:32]}
+    predictionResults = predictionResults.astype(int)
+
+
+
+    data_set = {"centerx": np.ndarray.tolist(predictionResults[0,0:16]), "centery": np.ndarray.tolist(predictionResults[0,16:32]), "red": 0, "green": 0, "blue": 0}
     return data_set
 
 
-#img = cv2.imread('cheese.jpg', -1)
-#img2 = np.copy(img/255)
-#resized = cv2.resize(img2, (256,256), interpolation = cv2.INTER_AREA)
+img = cv2.imread('grace_probebetter.hdr', -1)
+img2 = np.copy(img/255)
+resized = cv2.resize(img2, (256,256), interpolation = cv2.INTER_AREA)
+cv2.imwrite("left255.hdr", resized)
+img4D = np.empty((1, 256, 256, 3), dtype='uint8')
 
-#img4D = np.empty((1, 256, 256, 3), dtype='uint8')
+img4D[0, :, :, :] = resized
 
-#img4D[0, :, :, :] = resized
-
-#dataset = deep_learning(img4D, 32)
+dataset = deep_learning(img4D, 32)
 
 
 #x = dataset["centerx"]

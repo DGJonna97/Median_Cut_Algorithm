@@ -199,6 +199,6 @@ regions =[]
 #img = cv2.resize(img, (256,256), interpolation = cv2.INTER_AREA)
 
 #cv2.waitKey(0)
-img = cv2.imread('grace_probebetter.hdr', -1)
-mediancut(64, img, True)
+#img = cv2.imread('grace_probebetter.hdr', -1)
+#mediancut(64, img, True)
 #cv2.imwrite("mediancutresult.jpg", img)

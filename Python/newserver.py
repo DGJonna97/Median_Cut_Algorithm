@@ -25,7 +25,7 @@ while True:
                                  'Group 742 Visualization', 'Assets', 'Images', str(i) + '.jpg')
     #  Wait for next request from client
     message = socket.recv()
-    x = "".join(map(chr, message)).split(",") #list where [0] = method, 16*[1] light sources, [2] which image
+    x = "".join(map(chr, message)).split(",") #list where [0] = method, [1] sqrt2 light sources, [2] which image
 
 
     #jpg_original = base64.b64decode(message)
@@ -44,24 +44,25 @@ while True:
 
 
     dataset=[]
+    ligths = pow(2,3+int(x[1]))
     if  int(x[0])==0:
         # run median cut
         print("running median cut")
-        dataset = FinalMedianCut.mediancut(img=img, lightSources= pow(2,3+int(x[1])), falloff=True)
+        dataset = FinalMedianCut.mediancut(img=img, lightSources= ligths, falloff=True)
     elif int(x[0])==1:
         # run k means
         print("running kmeans")
-        dataset = kmeans.main(img, 1024, pow(2,4+int(x[1])), True)
+        dataset = kmeans.main(img, 1024, ligths, True)
     else:
         # run deep learning
         print("running deep learning")
-        img2 = numpy.copy(img)
+        img2 = numpy.copy(img/255)
         resized = cv2.resize(img2, (256,256), interpolation = cv2.INTER_AREA)
 
         img4D = numpy.empty((1, 256, 256, 3), dtype='uint8')
 
         img4D[0, :, :, :] = resized
-        dataset = FinalMedianCut.mediancut(img=img, lightSources=pow(2, 3 + int(x[1])), falloff=True)
+        dataset = DeepLearningPython.deep_learning(img4D, ligths)
 
     print(dataset)
 
