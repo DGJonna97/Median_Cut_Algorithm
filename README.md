@@ -1,11 +1,11 @@
 # Median_Cut_Algorithm
 Semester project of group 742 on 7th semester VGIS
 
-Important scrips:
-FinalMedianCut: Performs median cut
-kmeans: Performs k-means
-newserver: Starts the python server
-DeepLeaningPython: Performs deep learning
+Important scrips: 
+- FinalMedianCut: Performs median cut
+- kmeans: Performs k-means
+- newserver: Starts the python server
+- DeepLeaningPython: Performs deep learning
 
 How to star the server:
 1) Open up the Median_Cut_Algorithm/Python/ folder as a project in your preffered Python IDE.
